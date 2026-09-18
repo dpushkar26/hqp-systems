@@ -7,32 +7,32 @@ const IMPLEMENTATION_PHASES = [
     id: 'phase-1',
     title: 'Infrastructure Setup',
     description: 'We establish your central command dashboard and synchronize all property locations. Your entire hotel group is mapped securely into a unified cloud environment.',
-    bgColor: 'bg-white',
-    textColor: 'text-gray-900',
-    numberColor: 'text-[#9ca986]'
+    bgColor: 'bg-[#131b25]',
+    textColor: 'text-white',
+    numberColor: 'text-gray-500'
   },
   {
     id: 'phase-2',
     title: 'Menu & Inventory Import',
     description: 'Bring your in-room dining, poolside bar, and main restaurant menus online. We configure dynamic pricing, inventory tracking, and VIP tagging instantly.',
-    bgColor: 'bg-gray-50',
-    textColor: 'text-gray-900',
+    bgColor: 'bg-[#3f4a59]',
+    textColor: 'text-white',
     numberColor: 'text-gray-400'
   },
   {
     id: 'phase-3',
     title: 'Staff Onboarding',
     description: 'Our ultra-minimalist, intuitive interface ensures your hospitality staff is fully trained in minutes, drastically reducing onboarding overhead.',
-    bgColor: 'bg-gray-100',
+    bgColor: 'bg-[#9ca986]',
     textColor: 'text-gray-900',
-    numberColor: 'text-gray-400'
+    numberColor: 'text-gray-700'
   },
   {
     id: 'phase-4',
     title: 'Live Operations',
     description: 'Watch live orders flow seamlessly from the guest app directly to the kitchen and automatically sync with the final room folio.',
-    bgColor: 'bg-gray-900',
-    textColor: 'text-white',
+    bgColor: 'bg-[#eef1e6]', // A very light olive tint for contrast
+    textColor: 'text-gray-900',
     numberColor: 'text-[#9ca986]'
   },
 ];

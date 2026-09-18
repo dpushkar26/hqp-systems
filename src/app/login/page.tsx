@@ -48,7 +48,7 @@ export default function GlobalLoginSelection() {
                 </div>
               </Link>
 
-              <Link href="#" className="group block">
+              <Link href="/guest/login" className="group block">
                 <div className="p-8 bg-white border border-gray-100 hover:border-gray-300 transition-colors rounded-2xl flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-6">
                     <div className="w-12 h-12 bg-gray-50 text-gray-900 rounded-full flex items-center justify-center">

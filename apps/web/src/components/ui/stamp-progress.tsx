@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 export function StampProgress() {
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -13,7 +13,7 @@ export function StampProgress() {
     },
   };
 
-  const dotVariants = {
+  const dotVariants: Variants = {
     hidden: { opacity: 0.2, scale: 0.8 },
     visible: { 
       opacity: 1, 

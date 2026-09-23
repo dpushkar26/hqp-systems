@@ -3,6 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["motion", "framer-motion", "motion-dom"],
+  turbopack: {},
   webpack: (config) => {
     // Ensure Webpack can resolve packages hoisted to the monorepo root
     config.resolve.modules = [

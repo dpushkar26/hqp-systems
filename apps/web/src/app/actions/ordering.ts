@@ -58,7 +58,7 @@ export async function createOrder(payload: z.infer<typeof createOrderSchema>) {
 
   let totalAmount = 0;
   const orderItemsData = items.map(cartItem => {
-    const menuItem = menuItems.find(m => m.id === cartItem.menuItemId)!;
+    const menuItem = menuItems.find((m: any) => m.id === cartItem.menuItemId)!;
     if (!menuItem.isAvailable) {
       throw new Error(`Item ${menuItem.name} is currently unavailable.`);
     }
@@ -79,7 +79,7 @@ export async function createOrder(payload: z.infer<typeof createOrderSchema>) {
   }
 
   // 5. Single Postgres transaction
-  const order = await prisma.$transaction(async (tx) => {
+  const order = await prisma.$transaction(async (tx: any) => {
     // 5a. Upsert Customer
     let customer = await tx.customer.findUnique({
       where: {
@@ -179,7 +179,7 @@ export async function createOrder(payload: z.infer<typeof createOrderSchema>) {
   // Reward check (Async)
   if (updatedCustomer) {
     const rules = await prisma.rewardRule.findMany({ where: { hotelId } });
-    const unlockedRule = rules.find(r => r.visitThreshold === updatedCustomer.visitCount);
+    const unlockedRule = rules.find((r: any) => r.visitThreshold === updatedCustomer.visitCount);
     if (unlockedRule) {
       redis.publish(`hotel:${hotelId}:reward-unlocked`, JSON.stringify({
         customerId: updatedCustomer.id,

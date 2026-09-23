@@ -94,8 +94,8 @@ export function GlobalCardNav() {
         bgColor: "#111827", 
         textColor: "#fff",
         links: [
-          { label: "Features", href: "/#features", ariaLabel: "Features" },
-          { label: "How it Works", href: "/#how-it-works", ariaLabel: "How it Works" }
+          { label: "Features", href: "/features", ariaLabel: "Features" },
+          { label: "How it Works", href: "/how-it-works", ariaLabel: "How it Works" }
         ]
       },
       {

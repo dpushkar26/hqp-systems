@@ -3,8 +3,13 @@ import { FastifyInstance } from 'fastify';
 import 'fastify-socket.io';
 
 export function setupRedis(app: FastifyInstance) {
-  // Use TCP connection string (e.g. rediss://default:password@endpoint:port)
-  const redisUrl = process.env.UPSTASH_REDIS_TCP_URL || 'redis://localhost:6379';
+  const host = process.env.REDIS_HOST;
+  const port = process.env.REDIS_PORT;
+  const password = process.env.REDIS_PASSWORD;
+
+  const redisUrl = host && password 
+    ? `rediss://default:${password}@${host}:${port || 6379}`
+    : 'redis://localhost:6379';
   
   const redis = new Redis(redisUrl);
 

@@ -1,10 +1,11 @@
 import Fastify from 'fastify';
 import fastifySocketIO from 'fastify-socket.io';
 import dotenv from 'dotenv';
+import path from 'path';
 import { setupSocket } from './socket';
 import { setupRedis } from './redis';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const app = Fastify({
   logger: true,

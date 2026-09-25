@@ -11,8 +11,8 @@ export default function GlobalLoginSelection() {
       <div className="hidden lg:flex w-1/2 bg-[#fcfcfc] border-r border-gray-100 relative overflow-hidden items-center justify-center p-16">
         <div className="relative z-20 max-w-lg text-gray-900 w-full">
           <AnimatedSection>
-            <div className="font-serif text-3xl tracking-tight mb-32">Area</div>
-            <p className="font-mono text-[#9ca986] text-[10px] tracking-widest uppercase mb-6">Area Hospitality</p>
+            <div className="font-serif text-3xl tracking-tight mb-32">Venu</div>
+            <p className="font-mono text-[#9ca986] text-[10px] tracking-widest uppercase mb-6">Venu Hospitality</p>
             <h1 className="font-serif text-[clamp(2.5rem,5vw,5rem)] mb-8 leading-[0.95] tracking-tight">
               Manage <br/> your property.
             </h1>
@@ -27,7 +27,7 @@ export default function GlobalLoginSelection() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="max-w-md w-full">
           <AnimatedSection delay={0.1}>
-            <div className="lg:hidden font-serif text-3xl tracking-tight mb-12">Area</div>
+            <div className="lg:hidden font-serif text-3xl tracking-tight mb-12">Venu</div>
             
             <h2 className="font-serif text-4xl tracking-tight text-gray-900 mb-4">Welcome.</h2>
             <p className="font-sans text-gray-500 mb-12 font-light text-sm">How would you like to continue?</p>

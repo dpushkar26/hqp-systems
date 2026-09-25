@@ -1,7 +1,7 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import { ArrowLeft, Plus, Minus, Trash2, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Trash2, CheckCircle2, ShieldCheck, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { GridPulse } from "@/components/ui/grid-pulse";
 import { GlobalCardNav } from "@/components/navigation/GlobalCardNav";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 
@@ -27,7 +26,6 @@ export default function RootLayout({
       >
         <SmoothScrollProvider>
           <GlobalCardNav />
-          <GridPulse className="fixed inset-0 z-[-1]" />
           <Providers>
             {children}
           </Providers>

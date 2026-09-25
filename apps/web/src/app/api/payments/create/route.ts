@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     }
 
     // Calculate total
-    const itemTotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const itemTotal = order.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
     const totalWithTax = itemTotal * 1.18; // 18% GST
 
     // Razorpay expects amount in paise (multiply by 100)

@@ -22,7 +22,7 @@ export function GlobalCardNav() {
       <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white font-serif text-lg tracking-tighter">
         A
       </div>
-      <span className="font-serif text-gray-900 text-2xl tracking-tight hidden sm:block">Area</span>
+      <span className="font-serif text-gray-900 text-2xl tracking-tight hidden sm:block">Venu</span>
     </div>
   );
 
@@ -99,20 +99,20 @@ export function GlobalCardNav() {
         ]
       },
       {
-        label: "Business", 
+        label: "Customers", 
         bgColor: "#374151", 
         textColor: "#fff",
         links: [
-          { label: "Pricing", href: "/pricing", ariaLabel: "Pricing" },
-          { label: "Contact Sales", href: "/contact", ariaLabel: "Contact Sales" }
+          { label: "Track Order & Login", href: "/login", ariaLabel: "Customer Login" }
         ]
       },
       {
-        label: "Portal",
+        label: "Restaurants",
         bgColor: "#9ca986", 
         textColor: "#111827",
         links: [
-          { label: "Dashboard Login", href: "/owner/login", ariaLabel: "Login" },
+          { label: "Owner Dashboard", href: "/owner/login", ariaLabel: "Login" },
+          { label: "Add Your Hotel", href: "/owner/register", ariaLabel: "Register" },
         ]
       }
     ];

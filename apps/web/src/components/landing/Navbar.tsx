@@ -8,7 +8,7 @@ export function Navbar() {
           {/* Minimalist Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="font-serif text-2xl tracking-tight text-gray-900">
-              Area
+              Venu
             </Link>
           </div>
 

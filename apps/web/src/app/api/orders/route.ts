@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
     // Construct Order Items payload
     const orderItemsData = items.map(clientItem => {
-      const dbItem = menuItems.find(m => m.id === clientItem.menuItemId)!;
+      const dbItem = menuItems.find((m: any) => m.id === clientItem.menuItemId)!;
       return {
         menuItemId: dbItem.id,
         quantity: clientItem.quantity,
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       orderId: order.id,
       table: order.table.name,
       status: order.status,
-      items: order.items.map(i => ({ name: i.menuItem.name, quantity: i.quantity }))
+      items: order.items.map((i: any) => ({ name: i.menuItem.name, quantity: i.quantity }))
     }));
 
     return NextResponse.json({
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Create Order Error:', error);
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid input', details: error.issues }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

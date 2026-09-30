@@ -39,7 +39,7 @@ export default function OrdersPage() {
     socket.on('connect', () => {
       setIsConnected(true);
       // Join the hotel room
-      socket.emit('join-room', 'demo-hotel');
+      socket.emit('join:hotel', 'hqsp-demo');
     });
 
     socket.on('disconnect', () => setIsConnected(false));
@@ -56,6 +56,8 @@ export default function OrdersPage() {
         }, ...prev]);
       } else if (payload.event === 'PAYMENT_RECEIVED') {
          setOrders(prev => prev.map(o => o.id === payload.orderId ? { ...o, paymentStatus: 'PAID' } : o));
+      } else if (payload.event === 'order:update') {
+         setOrders(prev => prev.map(o => o.id === payload.orderId ? { ...o, status: payload.status } : o));
       }
     });
 

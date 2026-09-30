@@ -18,6 +18,27 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load from localStorage on mount
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem('hqsp_cart');
+      if (stored) {
+        setCart(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error("Failed to load cart", e);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save to localStorage on change
+  React.useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('hqsp_cart', JSON.stringify(cart));
+    }
+  }, [cart, isLoaded]);
 
   const addToCart = (item: MenuItem) => {
     setCart((prev) => {

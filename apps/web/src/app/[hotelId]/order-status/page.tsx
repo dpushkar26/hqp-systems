@@ -39,7 +39,7 @@ export default function OrderStatusPage() {
   useEffect(() => {
     const socket = io('http://localhost:4000', { withCredentials: true });
     socket.on('connect', () => {
-      socket.emit('join-room', hotelId);
+      socket.emit('join:hotel', hotelId);
     });
 
     socket.on('order:update', (payload) => {

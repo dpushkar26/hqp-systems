@@ -25,9 +25,12 @@ export async function GET(
     },
   });
 
-  // 3. Create redirect response and set cookie
-  const url = new URL(`/${hotelId}/menu`, request.url);
-  const response = NextResponse.redirect(url);
+  // 3. Create a standard HTTP 307 redirect with a relative URL. 
+  // This bypasses reverse proxy header issues AND works perfectly in strict QR code scanner browsers.
+  const response = new NextResponse(null, { 
+    status: 307, 
+    headers: { 'Location': `/${hotelId}/auth` } 
+  });
 
   response.cookies.set('active_session_id', session.id, {
     httpOnly: true,

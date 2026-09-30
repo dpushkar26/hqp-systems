@@ -80,14 +80,23 @@ export async function POST(request: Request) {
       }
     });
 
-    // Publish event to Redis for the Realtime server to pick up and broadcast to the Kitchen Dashboard
-    await redis.publish(`hotel:${session.hotelId}:orders`, JSON.stringify({
-      event: 'NEW_ORDER',
-      orderId: order.id,
-      table: order.table.name,
-      status: order.status,
-      items: order.items.map((i: any) => ({ name: i.menuItem.name, quantity: i.quantity }))
-    }));
+    // Send event to the Realtime server via internal webhook
+    try {
+      await fetch('http://localhost:4000/internal/webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'NEW_ORDER',
+          orderId: order.id,
+          table: order.table.name,
+          status: order.status,
+          items: order.items.map((i: any) => ({ name: i.menuItem.name, quantity: i.quantity })),
+          hotelId: session.hotelId
+        })
+      });
+    } catch (err) {
+      console.error('Failed to notify realtime server', err);
+    }
 
     return NextResponse.json({
       success: true,

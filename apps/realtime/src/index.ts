@@ -24,6 +24,24 @@ app.get('/health', async (request, reply) => {
   return { status: 'ok' };
 });
 
+app.post('/internal/webhook', async (request, reply) => {
+  const payload = request.body as any;
+  if (!payload || !payload.hotelId) {
+    return reply.status(400).send({ error: 'Missing hotelId' });
+  }
+  
+  const roomName = `hotel:${payload.hotelId}`;
+  
+  // Distribute event to all connected clients in the hotel room
+  if (payload.event === 'NEW_ORDER' || payload.event === 'order:update' || payload.event === 'PAYMENT_RECEIVED') {
+    app.io.to(roomName).emit('order:update', payload);
+  } else if (payload.event === 'reward:unlocked') {
+    app.io.to(roomName).emit('reward:unlocked', payload);
+  }
+
+  return { success: true };
+});
+
 const start = async () => {
   try {
     setupSocket(app);

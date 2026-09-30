@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Confetti from 'react-confetti';
 
 export default function CartPage() {
   const { hotelId } = useParams();
@@ -17,84 +16,17 @@ export default function CartPage() {
   const [instructions, setInstructions] = useState('');
   const [paymentMode, setPaymentMode] = useState<'PAY_LATER' | 'PAY_NOW'>('PAY_LATER');
   
-  // OTP & Order Flow States
-  const [isOrderTriggered, setIsOrderTriggered] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpStep, setOtpStep] = useState<'PHONE' | 'OTP'>('PHONE');
+  // Order Flow States
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isVerifiedSession, setIsVerifiedSession] = useState(false); // In production, this comes from the JWT/Cookie
 
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   const totalWithTax = total * 1.18;
 
   const handleInitialPlaceOrder = () => {
-    // If the session is already verified (e.g. they ordered earlier in the sitting), just process immediately.
-    if (isVerifiedSession) {
-      processOrder();
-    } else {
-      // Trigger the OTP Modal
-      setIsOrderTriggered(true);
-    }
-  };
-
-  const handlePhoneSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (phone.length < 10) return;
-    setIsVerifying(true);
-    
-    try {
-      const res = await fetch('/api/auth/otp/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: phone })
-      });
-      if (res.ok) {
-        setOtpStep('OTP');
-      } else {
-        alert('Failed to send OTP');
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsVerifying(false);
-    }
+    processOrder();
   };
 
   const [showConfetti, setShowConfetti] = useState(false);
-
-  const handleOtpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.length < 4) return;
-    setIsVerifying(true);
-    
-    try {
-      const res = await fetch('/api/auth/otp/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ otpCode: otp })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setIsVerifiedSession(true);
-        setIsOrderTriggered(false);
-        
-        if (data.visitCount === 5) {
-          setShowConfetti(true);
-          // Auto process order after 4 seconds of confetti
-          setTimeout(processOrder, 4000);
-        } else {
-          processOrder();
-        }
-      } else {
-        alert('Invalid OTP');
-        setIsVerifying(false);
-      }
-    } catch (err) {
-      console.error(err);
-      setIsVerifying(false);
-    }
-  };
 
   const processOrder = async () => {
     setIsVerifying(true);
@@ -105,14 +37,15 @@ export default function CartPage() {
         body: JSON.stringify({
           items: cart.map(item => ({ menuItemId: item.id, quantity: item.quantity })),
           instructions: instructions,
-          paymentMode: paymentMode === 'PAY_NOW' ? 'ONLINE' : 'CASH'
+          paymentMode: paymentMode === 'PAY_NOW' ? 'UPI' : 'CASH' // Changed ONLINE to UPI
         })
       });
       if (res.ok) {
         clearCart();
         router.push(`/${hotelId}/order-status`);
       } else {
-        alert('Failed to place order');
+        const errorData = await res.json();
+        alert('Failed to place order: ' + (errorData.error || 'Unknown error'));
         setIsVerifying(false);
       }
     } catch (err) {
@@ -145,21 +78,6 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] pb-32 font-sans selection:bg-gray-200">
-      {showConfetti && (
-        <div className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center">
-          <Confetti width={windowSize.width} height={windowSize.height} recycle={false} numberOfPieces={500} />
-          <motion.div
-            initial={{ scale: 0, rotate: -10 }}
-            animate={{ scale: 1, rotate: 0 }}
-            className="bg-gray-900 text-white px-8 py-6 rounded-3xl shadow-2xl text-center max-w-sm mx-4"
-          >
-            <div className="text-4xl mb-4">🎉</div>
-            <h3 className="text-2xl font-serif mb-2">Welcome Back!</h3>
-            <p className="text-gray-300">This is your 5th visit to our restaurant! We've automatically applied a special VIP discount to your order.</p>
-          </motion.div>
-        </div>
-      )}
-      
       {/* Header */}
       <div className="pt-10 px-6 pb-2 flex items-center gap-4">
         <Link href={`/${hotelId}/menu`} className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gray-50 transition-colors">
@@ -269,7 +187,7 @@ export default function CartPage() {
           onClick={handleInitialPlaceOrder}
           className="w-full max-w-2xl mx-auto bg-gray-900 text-white rounded-2xl p-4 text-sm font-medium flex justify-center items-center shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:scale-[1.02] active:scale-95 transition-all"
         >
-          {isVerifying && !isOrderTriggered ? (
+          {isVerifying ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
           ) : (
             `Place Order • ₹${totalWithTax.toFixed(2)}`
@@ -277,92 +195,6 @@ export default function CartPage() {
         </button>
       </div>
 
-      {/* Premium OTP Bottom Sheet Modal */}
-      <AnimatePresence>
-        {isOrderTriggered && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40"
-              onClick={() => setIsOrderTriggered(false)}
-            />
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6 pb-12 shadow-[0_-20px_60px_rgba(0,0,0,0.1)]"
-            >
-              <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-8" />
-              
-              <div className="max-w-md mx-auto">
-                <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-4 border border-green-100">
-                  <ShieldCheck className="text-green-600 w-6 h-6" strokeWidth={1.5} />
-                </div>
-                <h2 className="text-2xl font-serif text-gray-900 tracking-tight mb-2">Secure your table</h2>
-                <p className="text-gray-500 font-light text-sm mb-8 leading-relaxed">
-                  We require a quick verification for your first order. 
-                  <span className="font-medium text-gray-900 block mt-1">All future orders in this sitting won't require this.</span>
-                </p>
-
-                {otpStep === 'PHONE' ? (
-                  <form onSubmit={handlePhoneSubmit} className="space-y-4">
-                    <div>
-                      <label className="text-[10px] text-gray-400 font-medium uppercase tracking-widest mb-2 block">Phone Number</label>
-                      <div className="flex bg-gray-50 border border-gray-200 rounded-xl overflow-hidden focus-within:border-gray-900 focus-within:bg-white transition-colors">
-                        <span className="px-4 py-4 border-r border-gray-200 text-gray-500 font-medium text-sm">+91</span>
-                        <input
-                          type="tel"
-                          autoFocus
-                          maxLength={10}
-                          placeholder="99999 99999"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                          className="w-full p-4 outline-none bg-transparent text-gray-900 font-medium tracking-wider"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={phone.length < 10 || isVerifying}
-                      className="w-full bg-gray-900 text-white rounded-xl p-4 text-sm font-medium flex justify-center items-center hover:bg-[#9ca986] transition-colors disabled:opacity-50"
-                    >
-                      {isVerifying ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Send Code'}
-                    </button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleOtpSubmit} className="space-y-4">
-                    <div>
-                      <label className="text-[10px] text-gray-400 font-medium uppercase tracking-widest mb-2 flex justify-between">
-                        <span>Enter 4-digit code</span>
-                        <button type="button" onClick={() => setOtpStep('PHONE')} className="text-gray-900 underline">Change Number</button>
-                      </label>
-                      <input
-                        type="text"
-                        autoFocus
-                        maxLength={4}
-                        placeholder="••••"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                        className="w-full p-4 text-center text-2xl tracking-[1em] outline-none border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-gray-900 transition-colors"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={otp.length < 4 || isVerifying}
-                      className="w-full bg-gray-900 text-white rounded-xl p-4 text-sm font-medium flex justify-center items-center hover:bg-[#9ca986] transition-colors disabled:opacity-50"
-                    >
-                      {isVerifying ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Verify & Place Order'}
-                    </button>
-                  </form>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

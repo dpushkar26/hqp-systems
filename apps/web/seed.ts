@@ -1,58 +1,74 @@
 import { prisma } from './src/lib/prisma';
 
 async function main() {
-  console.log('Seeding database...');
-
-  // Create Hotel
+  // Create a demo hotel
   const hotel = await prisma.hotel.upsert({
-    where: { slug: 'demo-hotel' },
+    where: { slug: 'hqsp-demo' },
     update: {},
     create: {
-      id: 'demo-hotel',
-      slug: 'demo-hotel',
-      name: 'The Grand HQSP Hotel',
+      id: 'hqsp-demo',
+      slug: 'hqsp-demo',
+      name: 'HQSP Demo Hotel',
     },
   });
 
-  // Create Table
-  const table = await prisma.table.upsert({
-    where: { id: 'table-1' },
-    update: {},
-    create: {
-      id: 'table-1',
-      hotelId: hotel.id,
-      name: 'Table 1',
-    },
-  });
+  // Create tables
+  const tables = [
+    { id: 'table-1', name: 'Table 1' },
+    { id: 'table-2', name: 'Table 2' },
+    { id: 'table-3', name: 'Table 3' },
+    { id: 'table-4', name: 'Table 4' },
+    { id: 'table-5', name: 'Table 5' },
+  ];
 
-  // Create Menu Category
-  const category = await prisma.menuCategory.upsert({
-    where: { id: 'cat-1' },
-    update: {},
-    create: {
-      id: 'cat-1',
-      hotelId: hotel.id,
-      name: 'Main Course',
-    },
-  });
+  for (const t of tables) {
+    await prisma.table.upsert({
+      where: { id: t.id },
+      update: {},
+      create: {
+        id: t.id,
+        hotelId: hotel.id,
+        name: t.name,
+      },
+    });
+  }
 
-  // Create Menu Item
-  const menuItem = await prisma.menuItem.upsert({
-    where: { id: 'item-1' },
-    update: {},
-    create: {
-      id: 'item-1',
-      hotelId: hotel.id,
-      categoryId: category.id,
-      name: 'Spicy Chicken Curry',
-      price: 450,
-      isAvailable: true,
-    },
-  });
+  // Create menu category
+  let category = await prisma.menuCategory.findFirst({ where: { hotelId: hotel.id } });
+  if (!category) {
+    category = await prisma.menuCategory.create({
+      data: {
+        hotelId: hotel.id,
+        name: 'Main Course',
+      },
+    });
+  }
 
-  console.log('Seeding complete! You can now test the API.');
-  console.log(`Test with -> hotelId: "${hotel.id}", tableId: "${table.id}"`);
-  console.log(`Order Item ID -> "${menuItem.id}"`);
+  // Create menu items
+  const itemsCount = await prisma.menuItem.count({ where: { hotelId: hotel.id } });
+  if (itemsCount === 0) {
+    await prisma.menuItem.create({
+      data: {
+        hotelId: hotel.id,
+        categoryId: category.id,
+        name: 'Burger',
+        price: 15.99,
+        isAvailable: true,
+      },
+    });
+    
+    await prisma.menuItem.create({
+      data: {
+        hotelId: hotel.id,
+        categoryId: category.id,
+        name: 'Pizza',
+        price: 20.00,
+        isAvailable: true,
+      },
+    });
+  }
+
+  console.log('Seed completed successfully!');
 }
 
 main()
@@ -61,5 +77,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    // Need to disconnect the pg pool
+    await prisma.$disconnect();
   });

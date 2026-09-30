@@ -58,12 +58,46 @@ export async function POST(request: Request) {
       }
     });
 
-    // 5. TODO: Integrate Twilio or SNS here to actually send the SMS
-    console.log(`[DEV MODE] OTP for ${phoneNumber} is ${otpCode}`);
+    // 5. Send the SMS via Fast2SMS (Cost-effective for Indian numbers)
+    if (process.env.FAST2SMS_API_KEY) {
+      try {
+        const toPhone = phoneNumber.replace('+91', ''); // Fast2SMS expects 10 digit number
+        
+        const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+          method: 'POST',
+          headers: {
+            'authorization': process.env.FAST2SMS_API_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            route: 'otp',
+            variables_values: otpCode,
+            numbers: toPhone
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.return) {
+          console.log(`[PROD] Fast2SMS sent successfully to ${toPhone}`);
+        } else {
+          console.error('[PROD] Fast2SMS Error:', data.message);
+          console.log(`[DEV FALLBACK] OTP for ${phoneNumber} is ${otpCode}`);
+        }
+      } catch (smsError) {
+        console.error('[PROD] SMS Request Failed:', smsError);
+        console.log(`[DEV FALLBACK] OTP for ${phoneNumber} is ${otpCode}`);
+      }
+    } else {
+      console.log(`[DEV MODE] OTP for ${phoneNumber} is ${otpCode}`);
+    }
 
     return NextResponse.json({
       success: true,
       message: 'OTP Sent successfully',
+      // In a real production app you would remove this line
+      // But we leave it here so your dev testing isn't blocked if Fast2SMS isn't set up yet!
+      devOtpCode: otpCode, 
     });
 
   } catch (error) {

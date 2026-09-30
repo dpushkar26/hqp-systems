@@ -39,7 +39,7 @@ const IMPLEMENTATION_PHASES = [
 
 export function HeroSection() {
   return (
-    <section className="relative pt-32 pb-0 bg-white flex flex-col items-center overflow-clip">
+    <section className="relative pt-32 pb-0 bg-white flex flex-col items-center overflow-x-clip">
       {/* Grid Pulse Background */}
       <GridPulse className="absolute inset-0 z-0 opacity-80" ambient={6} reach={4} />
       

@@ -13,11 +13,20 @@ export async function PATCH(request: Request) {
       data: { status }
     });
 
-    await redis.publish(`hotel:${order.hotelId}:orders`, JSON.stringify({
-      event: 'order:update',
-      orderId: order.id,
-      status: order.status
-    }));
+    try {
+      await fetch('http://localhost:4000/internal/webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'order:update',
+          orderId: order.id,
+          status: order.status,
+          hotelId: order.hotelId
+        })
+      });
+    } catch (err) {
+      console.error('Failed to notify realtime server', err);
+    }
 
     return NextResponse.json({ success: true, order });
   } catch (error) {

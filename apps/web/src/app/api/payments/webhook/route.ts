@@ -45,13 +45,23 @@ export async function POST(request: Request) {
           })
         ]);
 
-        // Publish event to Redis so the Owner dashboard sees the payment instantly
-        await redis.publish(`hotel:${payment.order.hotelId}:orders`, JSON.stringify({
-          event: 'PAYMENT_RECEIVED',
-          orderId: payment.order.id,
-          tableId: payment.order.tableId,
-          amount: payment.amount
-        }));
+        // Publish event to the Realtime Server via internal webhook so the Owner dashboard sees it instantly
+        try {
+          const webhookUrl = process.env.REALTIME_WEBHOOK_URL || 'http://localhost:4000/internal/webhook';
+          await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              hotelId: payment.order.hotelId,
+              event: 'PAYMENT_RECEIVED',
+              orderId: payment.order.id,
+              tableId: payment.order.tableId,
+              amount: payment.amount
+            })
+          });
+        } catch (webhookErr) {
+          console.error('Failed to send webhook to realtime server', webhookErr);
+        }
       }
     }
 

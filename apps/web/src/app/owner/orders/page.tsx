@@ -32,7 +32,8 @@ export default function OrdersPage() {
       });
 
     // Connect to Realtime Server
-    const socket = io('http://localhost:4000', {
+    const socketUrl = process.env.NEXT_PUBLIC_REALTIME_URL || 'http://localhost:4000';
+    const socket = io(socketUrl, {
       withCredentials: true,
     });
 

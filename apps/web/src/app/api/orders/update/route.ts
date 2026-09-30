@@ -14,7 +14,8 @@ export async function PATCH(request: Request) {
     });
 
     try {
-      await fetch('http://localhost:4000/internal/webhook', {
+      const webhookUrl = process.env.REALTIME_WEBHOOK_URL || 'http://localhost:4000/internal/webhook';
+      await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

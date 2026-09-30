@@ -37,7 +37,8 @@ export default function OrderStatusPage() {
 
   // Connect to Real-time Socket
   useEffect(() => {
-    const socket = io('http://localhost:4000', { withCredentials: true });
+    const socketUrl = process.env.NEXT_PUBLIC_REALTIME_URL || 'http://localhost:4000';
+    const socket = io(socketUrl, { withCredentials: true });
     socket.on('connect', () => {
       socket.emit('join:hotel', hotelId);
     });

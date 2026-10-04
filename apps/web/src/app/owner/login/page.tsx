@@ -1,136 +1,122 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Building, CheckCircle2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, Lock } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { signIn } from 'next-auth/react';
 
 export default function OwnerLogin() {
   const router = useRouter();
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<1 | 2>(1);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setStep(2);
-    }, 1000);
+    setError('');
+    
+    const result = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (result?.error) {
+      setError('Invalid email or password');
+    } else {
+      router.push('/owner/dashboard');
+    }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push('/owner/orders');
-    }, 1000);
+  const handleGoogleLogin = () => {
+    signIn('google', { callbackUrl: '/owner/dashboard' });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full"
+    >
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h1>
+      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
       
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-[2rem] border border-gray-100 p-8 sm:p-12 w-full max-w-md relative z-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)]"
-      >
-        <div className="flex justify-center mb-10">
-          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100">
-            <Building className="w-6 h-6 text-gray-900" strokeWidth={1.5} />
+      <form onSubmit={handleLogin} className="space-y-5 mt-6">
+        <div>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500">
+              <Mail size={18} strokeWidth={2.5} />
+            </span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-white border border-gray-200 rounded-xl py-3.5 pl-12 pr-4 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all text-[15px] text-gray-900 placeholder:text-gray-400"
+              placeholder="Email Address"
+              required
+            />
           </div>
         </div>
-        
-        <div className="text-center mb-10 border-b border-gray-100 pb-8">
-          <h1 className="font-serif text-3xl tracking-tight text-gray-900 mb-4">Area Portal</h1>
-          <p className="text-gray-500 font-light text-sm max-w-[250px] mx-auto">
-            {step === 1 ? 'Enter your mobile number to access your property dashboard.' : `Enter the 4-digit code sent to +91 ${phone}`}
-          </p>
+
+        <div>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500">
+              <Lock size={18} strokeWidth={2.5} />
+            </span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-white border border-gray-200 rounded-xl py-3.5 pl-12 pr-4 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all text-[15px] text-gray-900 placeholder:text-gray-400"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div className="flex justify-end mt-2">
+            <Link href="/owner/forgot-password" className="text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">
+              Forget Password?
+            </Link>
+          </div>
         </div>
 
-        <div className="relative min-h-[220px]">
-          <AnimatePresence mode="wait">
-            {step === 1 ? (
-              <motion.form 
-                key="step1"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleSendOtp} 
-                className="space-y-6"
-              >
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-widest text-gray-500 mb-2">Mobile Number</label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-mono text-sm">+91</span>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                      className="w-full bg-gray-50 border border-transparent rounded-xl py-4 pl-14 pr-4 outline-none focus:border-gray-900 focus:bg-white transition-all font-mono tracking-widest text-lg text-gray-900"
-                      placeholder="9876543210"
-                      maxLength={10}
-                      required
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading || phone.length < 10}
-                  className="w-full bg-gray-900 text-white rounded-full py-4 font-sans text-sm font-medium flex justify-center items-center gap-2 hover:bg-[#9ca986] transition-all disabled:opacity-60 mt-8"
-                >
-                  {loading ? 'Sending...' : 'Continue'} <ArrowRight className="w-4 h-4" />
-                </button>
-              </motion.form>
-            ) : (
-              <motion.form 
-                key="step2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleVerifyOtp} 
-                className="space-y-6"
-              >
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-widest text-gray-500 mb-2 flex flex-col gap-1">
-                    Enter Verification Code
-                    <span className="text-gray-400 font-sans tracking-normal normal-case">(Mock: 1234)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                    className="w-full bg-gray-50 border border-transparent rounded-xl py-4 px-4 outline-none focus:border-gray-900 focus:bg-white text-center tracking-[1em] text-3xl font-serif transition-all text-gray-900"
-                    placeholder="----"
-                    maxLength={4}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading || otp.length < 4}
-                  className="w-full bg-gray-900 text-white rounded-full py-4 font-sans text-sm font-medium flex justify-center items-center gap-2 hover:bg-[#9ca986] transition-all disabled:opacity-60 mt-8"
-                >
-                  {loading ? 'Verifying...' : 'Verify & Login'} <CheckCircle2 className="w-4 h-4" />
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => setStep(1)} 
-                  className="w-full text-xs text-gray-400 hover:text-gray-900 transition-colors mt-4"
-                >
-                  Change Mobile Number
-                </button>
-              </motion.form>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </div>
+        <button
+          type="submit"
+          disabled={loading || !email || !password}
+          className="w-full bg-[#F97316] text-white rounded-xl py-3.5 font-semibold text-[15px] hover:bg-orange-600 transition-all disabled:opacity-60 disabled:hover:bg-[#F97316] mt-4 shadow-[0_4px_14px_rgba(249,115,22,0.3)]"
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+
+      <div className="my-8 flex items-center justify-center space-x-4">
+        <div className="h-px bg-gray-200 flex-1"></div>
+        <span className="text-gray-400 text-sm font-medium">Or</span>
+        <div className="h-px bg-gray-200 flex-1"></div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <button onClick={handleGoogleLogin} type="button" className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 hover:bg-gray-50 transition-colors">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+          <span className="text-[14px] font-semibold text-gray-700">Google</span>
+        </button>
+        <button type="button" className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 hover:bg-gray-50 transition-colors">
+          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-5 h-5" alt="Facebook" />
+          <span className="text-[14px] font-semibold text-gray-700">Facebook</span>
+        </button>
+      </div>
+
+      <div className="mt-8 text-center">
+        <p className="text-[15px] text-gray-600 font-medium">
+          Don't have an account? <Link href="/owner/register" className="text-orange-500 font-semibold hover:text-orange-600">Sign Up</Link>
+        </p>
+      </div>
+    </motion.div>
   );
 }

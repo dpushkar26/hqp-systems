@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, CalendarDays, ShoppingBag, UtensilsCrossed, QrCode, MessageSquare, Box, DollarSign, Star, Settings, LogOut, Search } from 'lucide-react';
+import AuthLayout from '@/components/owner/AuthLayout';
 
 const SIDEBAR_ITEMS = [
   { name: 'Dashboard', href: '/owner/dashboard', icon: LayoutDashboard },
@@ -19,8 +20,8 @@ const SIDEBAR_ITEMS = [
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname === '/owner/login' || pathname === '/owner/register') {
-    return <>{children}</>;
+  if (pathname === '/owner/login' || pathname === '/owner/register' || pathname === '/owner/forgot-password') {
+    return <AuthLayout>{children}</AuthLayout>;
   }
 
   return (

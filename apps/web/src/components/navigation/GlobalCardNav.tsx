@@ -118,15 +118,25 @@ export function GlobalCardNav() {
     ];
   }
 
+  const isAuthPage = pathname === '/owner/login' || pathname === '/owner/register' || pathname === '/owner/forgot-password';
+
+  if (isAuthPage) {
+    return null;
+  }
+
   return (
-    <CardNav
-      logoNode={LogoSlot}
-      items={items}
-      baseColor="#ffffff"
-      menuColor="#111827"
-      buttonBgColor="#111827"
-      buttonTextColor="#ffffff"
-      ease="power3.out"
-    />
+    <>
+      <CardNav
+        logoNode={LogoSlot}
+        items={items}
+        baseColor="#ffffff"
+        menuColor="#111827"
+        buttonBgColor="#111827"
+        buttonTextColor="#ffffff"
+        ease="power3.out"
+      />
+      {/* Spacer to push content down since the nav is likely fixed */}
+      <div className="h-[100px] shrink-0 w-full" aria-hidden="true" />
+    </>
   );
 }

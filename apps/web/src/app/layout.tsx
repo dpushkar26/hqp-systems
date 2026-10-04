@@ -22,7 +22,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Arya:wght@400;700&family=Baloo+2:wght@400..800&family=Eczar:wght@400..800&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Laila:wght@300;400;500;600;700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body
-        className="font-mono antialiased relative min-h-screen flex flex-col pt-[100px] bg-white text-gray-900"
+        className="font-mono antialiased relative min-h-screen flex flex-col bg-white text-gray-900"
       >
         <SmoothScrollProvider>
           <GlobalCardNav />

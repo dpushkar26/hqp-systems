@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, LayoutGrid, ClipboardList, Menu, Bell, User, Send, Settings } from 'lucide-react';
+import { Home, LayoutGrid, ClipboardList, Menu, QrCode, Bell, User, Send, Settings } from 'lucide-react';
 import AuthLayout from '@/components/owner/AuthLayout';
 
 const SIDEBAR_ITEMS = [
@@ -11,6 +11,7 @@ const SIDEBAR_ITEMS = [
   { name: 'Dashboard', href: '/owner/dashboard', icon: LayoutGrid },
   { name: 'Orders', href: '/owner/orders', icon: ClipboardList },
   { name: 'Menu', href: '/owner/menu', icon: Menu },
+  { name: 'Tables', href: '/owner/tables', icon: QrCode },
   { name: 'Notifications', href: '/owner/notifications', icon: Bell },
   { name: 'Profile', href: '/owner/profile', icon: User },
   { name: 'Messages', href: '/owner/messages', icon: Send },
@@ -25,9 +26,9 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex h-screen bg-[#F9FAFB] font-sans overflow-hidden">
-      {/* Thin Sidebar - White with right border */}
-      <div className="w-[80px] bg-white flex flex-col items-center py-6 border-r border-gray-100 shrink-0 z-10">
+    <div className="min-h-screen bg-white font-sans">
+      {/* Thin Sidebar - Fixed */}
+      <div className="fixed top-0 left-0 w-[80px] h-screen bg-white flex flex-col items-center py-6 border-r border-gray-100 z-50">
         
         {/* Logo */}
         <div className="mb-10 cursor-pointer">
@@ -62,10 +63,8 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-white custom-scrollbar">
-        <div className="h-full">
-          {children}
-        </div>
+      <main className="ml-[80px] bg-white min-h-screen">
+        {children}
       </main>
     </div>
   );

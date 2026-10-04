@@ -73,18 +73,17 @@ export default function OrdersPage() {
   const activeOrder = mockOrders.find(o => o.id === activeOrderId);
 
   return (
-    <div className="w-full h-full text-gray-900 p-8 flex flex-col font-sans bg-white relative">
+    <div className="w-full text-gray-900 p-8 flex flex-col font-sans bg-white relative">
       <h1 className="text-3xl font-heading font-bold text-gray-900 mb-8">Pending Order</h1>
 
-      <div className="flex gap-10 flex-1 overflow-hidden">
+      <div className="flex gap-10">
         
         {/* Left Pane - Order List */}
-        <div className="w-[350px] bg-white border border-gray-100 rounded-xl flex flex-col flex-shrink-0 shadow-sm">
+        <div className="w-[350px] bg-white border border-gray-100 rounded-xl flex flex-col flex-shrink-0 shadow-sm self-start sticky top-8">
           <div className="p-6 border-b border-gray-100">
             <h2 className="text-[18px] font-heading font-bold text-gray-900">All Orders</h2>
           </div>
-          
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+          <div className="p-4 space-y-4">
             {mockOrders.map(order => {
               const isActive = activeOrderId === order.id;
               
@@ -99,10 +98,10 @@ export default function OrdersPage() {
                   }`}
                 >
                   <div className="flex justify-between items-center mb-4">
-                    <span className={`text-[16px] font-bold ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                    <span className={`text-[16px] font-medium ${isActive ? 'text-white' : 'text-gray-900'}`}>
                       Order {order.id}
                     </span>
-                    <span className={`text-[13px] font-bold ${
+                    <span className={`text-[13px] font-medium ${
                       isActive 
                         ? 'text-white' 
                         : order.paymentStatus === 'Paid' ? 'text-[#22C55E]' : 'text-orange-500'
@@ -114,7 +113,7 @@ export default function OrdersPage() {
                     <span className={`text-[13px] font-medium ${isActive ? 'text-white/90' : 'text-gray-500'}`}>
                       Table : {order.tableNo} Guest : {order.guest}
                     </span>
-                    <span className={`text-[16px] font-bold ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                    <span className={`text-[16px] font-medium ${isActive ? 'text-white' : 'text-gray-900'}`}>
                       {order.total}
                     </span>
                   </div>
@@ -131,7 +130,7 @@ export default function OrdersPage() {
               {/* Header */}
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-2xl font-heading font-bold text-gray-900">Order {activeOrder.id}</h2>
-                <span className={`text-[16px] font-bold ${
+                <span className={`text-[16px] font-medium ${
                   activeOrder.paymentStatus === 'Paid' ? 'text-[#22C55E]' : 'text-orange-500'
                 }`}>
                   {activeOrder.paymentStatus}
@@ -143,20 +142,20 @@ export default function OrdersPage() {
                 <h3 className="text-[16px] font-bold text-gray-900 mb-6 font-heading">Details</h3>
                 <div className="grid grid-cols-4 gap-4 border-b border-gray-100 pb-8">
                   <div>
-                    <p className="text-[13px] font-bold text-gray-400 mb-2">Table No</p>
-                    <p className="text-[15px] font-bold text-gray-900">{activeOrder.tableNo}</p>
+                    <p className="text-[13px] font-medium text-gray-400 mb-2">Table No</p>
+                    <p className="text-[15px] font-medium text-gray-900">{activeOrder.tableNo}</p>
                   </div>
                   <div>
-                    <p className="text-[13px] font-bold text-gray-400 mb-2">Guest</p>
-                    <p className="text-[15px] font-bold text-gray-900">{activeOrder.guest}</p>
+                    <p className="text-[13px] font-medium text-gray-400 mb-2">Guest</p>
+                    <p className="text-[15px] font-medium text-gray-900">{activeOrder.guest}</p>
                   </div>
                   <div>
-                    <p className="text-[13px] font-bold text-gray-400 mb-2">Customer</p>
-                    <p className="text-[15px] font-bold text-gray-900">{activeOrder.customer}</p>
+                    <p className="text-[13px] font-medium text-gray-400 mb-2">Customer</p>
+                    <p className="text-[15px] font-medium text-gray-900">{activeOrder.customer}</p>
                   </div>
                   <div>
-                    <p className="text-[13px] font-bold text-gray-400 mb-2">Payment</p>
-                    <p className="text-[15px] font-bold text-gray-900">{activeOrder.paymentMethod}</p>
+                    <p className="text-[13px] font-medium text-gray-400 mb-2">Payment</p>
+                    <p className="text-[15px] font-medium text-gray-900">{activeOrder.paymentMethod}</p>
                   </div>
                 </div>
               </div>
@@ -172,17 +171,17 @@ export default function OrdersPage() {
                         <div className="flex items-center gap-6">
                           <img src={item.img} alt={item.name} className="w-[72px] h-[72px] rounded-lg object-cover" />
                           <div className="flex items-center gap-3">
-                            <span className="text-[15px] font-bold text-gray-900">{item.name}</span>
-                            <span className="text-[15px] font-bold text-gray-900">x {item.qty}</span>
+                            <span className="text-[15px] font-medium text-gray-900">{item.name}</span>
+                            <span className="text-[15px] font-medium text-gray-900">x {item.qty}</span>
                           </div>
                         </div>
-                        <span className="text-[16px] font-bold text-orange-500">{item.price}</span>
+                        <span className="text-[16px] font-medium text-orange-500">{item.price}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="h-full flex items-center justify-center">
-                    <p className="text-gray-400 font-bold text-[16px]">No Order Details</p>
+                    <p className="text-gray-400 font-medium text-[16px]">No Order Details</p>
                   </div>
                 )}
               </div>
@@ -192,7 +191,7 @@ export default function OrdersPage() {
                 <div className="mt-8 pt-4">
                   <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full bg-orange-500 text-white rounded-xl py-4 font-bold text-[16px] hover:bg-orange-600 transition-colors shadow-[0_4px_14px_rgba(249,115,22,0.3)]"
+                    className="w-full bg-orange-500 text-white rounded-xl py-4 font-medium text-[16px] hover:bg-orange-600 transition-colors shadow-[0_4px_14px_rgba(249,115,22,0.3)]"
                   >
                     Print Invoice
                   </button>
@@ -201,7 +200,7 @@ export default function OrdersPage() {
             </>
           ) : (
             <div className="flex-1 flex justify-center items-center">
-              <p className="text-gray-400 font-bold text-[16px]">No Order Details</p>
+              <p className="text-gray-400 font-medium text-[16px]">No Order Details</p>
             </div>
           )}
         </div>
@@ -225,22 +224,22 @@ export default function OrdersPage() {
                 
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between">
-                    <span className="text-[14px] font-bold text-gray-900">Customer Name</span>
-                    <span className="text-[14px] font-bold text-gray-900">{activeOrder?.customerFullName}</span>
+                    <span className="text-[14px] font-medium text-gray-900">Customer Name</span>
+                    <span className="text-[14px] font-medium text-gray-900">{activeOrder?.customerFullName}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[14px] font-bold text-gray-900">Guest</span>
-                    <span className="text-[14px] font-bold text-gray-900">{activeOrder?.guest}</span>
+                    <span className="text-[14px] font-medium text-gray-900">Guest</span>
+                    <span className="text-[14px] font-medium text-gray-900">{activeOrder?.guest}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[14px] font-bold text-gray-900">Payment</span>
-                    <span className="text-[14px] font-bold text-gray-900">{activeOrder?.paymentMethod}</span>
+                    <span className="text-[14px] font-medium text-gray-900">Payment</span>
+                    <span className="text-[14px] font-medium text-gray-900">{activeOrder?.paymentMethod}</span>
                   </div>
                 </div>
 
                 <div className="border-t border-b border-gray-100 py-6 space-y-4 mb-6">
                   {activeOrder?.items.map((item, idx) => (
-                    <div key={idx} className="flex items-center text-[13px] font-bold text-gray-900">
+                    <div key={idx} className="flex items-center text-[13px] font-medium text-gray-900">
                       <span className="w-8">{idx + 1}).</span>
                       <span className="flex-1">{item.name}</span>
                       <span className="w-12 text-center">{item.qty}</span>
@@ -251,28 +250,28 @@ export default function OrdersPage() {
 
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between">
-                    <span className="text-[14px] font-bold text-gray-900">Subtotal</span>
-                    <span className="text-[14px] font-bold text-gray-900">$430.00</span>
+                    <span className="text-[14px] font-medium text-gray-900">Subtotal</span>
+                    <span className="text-[14px] font-medium text-gray-900">$430.00</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[14px] font-bold text-gray-400">Tax</span>
-                    <span className="text-[14px] font-bold text-gray-400">$2.00</span>
+                    <span className="text-[14px] font-medium text-gray-400">Tax</span>
+                    <span className="text-[14px] font-medium text-gray-400">$2.00</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[14px] font-bold text-gray-400">Charges</span>
-                    <span className="text-[14px] font-bold text-gray-400">$8.00</span>
+                    <span className="text-[14px] font-medium text-gray-400">Charges</span>
+                    <span className="text-[14px] font-medium text-gray-400">$8.00</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center mb-8 border-t border-gray-100 pt-6">
-                  <span className="text-[18px] font-bold text-gray-900">Total</span>
-                  <span className="text-[18px] font-bold text-gray-900">$440.00</span>
+                  <span className="text-[18px] font-medium text-gray-900">Total</span>
+                  <span className="text-[18px] font-medium text-gray-900">$440.00</span>
                 </div>
 
                 <div className="flex justify-center">
                   <button 
                     onClick={() => setIsModalOpen(false)}
-                    className="w-48 bg-orange-500 text-white rounded-xl py-3.5 font-bold text-[15px] hover:bg-orange-600 transition-colors shadow-[0_4px_14px_rgba(249,115,22,0.3)]"
+                    className="w-48 bg-orange-500 text-white rounded-xl py-3.5 font-medium text-[15px] hover:bg-orange-600 transition-colors shadow-[0_4px_14px_rgba(249,115,22,0.3)]"
                   >
                     Print Invoice
                   </button>

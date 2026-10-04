@@ -118,9 +118,7 @@ export function GlobalCardNav() {
     ];
   }
 
-  const isAuthPage = pathname === '/owner/login' || pathname === '/owner/register' || pathname === '/owner/forgot-password';
-
-  if (isAuthPage) {
+  if (isOwner) {
     return null;
   }
 

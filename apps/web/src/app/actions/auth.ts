@@ -1,11 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
-
-const prisma = new PrismaClient();
 
 // Setup Nodemailer transporter (you will need to provide SMTP credentials in .env)
 const transporter = nodemailer.createTransport({

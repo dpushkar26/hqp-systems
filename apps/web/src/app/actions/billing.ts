@@ -57,7 +57,7 @@ export async function generateInvoice(payload: z.infer<typeof generateInvoiceSch
       totalAmount,
       paymentStatus: 'UNPAID',
       orders: {
-        connect: unpaidOrders.map(order => ({ id: order.id })), // Link all unpaid orders to this invoice
+        connect: unpaidOrders.map((order: any) => ({ id: order.id })), // Link all unpaid orders to this invoice
       }
     },
   });

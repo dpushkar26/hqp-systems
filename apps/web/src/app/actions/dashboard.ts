@@ -98,7 +98,7 @@ export async function exportDailyBillsToExcel(payload: z.infer<typeof exportDail
   });
 
   // Map database records to flat objects for Excel
-  const excelData = invoices.map(inv => ({
+  const excelData = invoices.map((inv: any) => ({
     'Invoice ID': inv.id,
     'Date & Time': inv.createdAt.toLocaleString(),
     'Table Name': inv.table.name,

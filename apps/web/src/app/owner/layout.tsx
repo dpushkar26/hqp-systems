@@ -21,7 +21,7 @@ const SIDEBAR_ITEMS = [
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname === '/owner/login' || pathname === '/owner/register' || pathname === '/owner/forgot-password') {
+  if (pathname === '/owner/login' || pathname === '/owner/register' || pathname === '/owner/forgot-password' || pathname === '/owner/reset-password') {
     return <AuthLayout>{children}</AuthLayout>;
   }
 

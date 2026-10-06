@@ -64,9 +64,9 @@ export default function AuthPage() {
         if (data.visitCount === 5) {
           setShowConfetti(true);
           // Auto redirect after 4 seconds of confetti
-          setTimeout(() => router.push(`/${hotelId}/menu`), 4000);
+          setTimeout(() => router.push(`/${hotelId}/cart`), 4000);
         } else {
-          router.push(`/${hotelId}/menu`);
+          router.push(`/${hotelId}/cart`);
         }
       } else {
         alert('Invalid OTP');

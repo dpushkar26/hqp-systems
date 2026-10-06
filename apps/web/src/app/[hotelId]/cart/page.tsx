@@ -43,6 +43,8 @@ export default function CartPage() {
       if (res.ok) {
         clearCart();
         router.push(`/${hotelId}/order-status`);
+      } else if (res.status === 403) {
+        router.push(`/${hotelId}/auth`);
       } else {
         const errorData = await res.json();
         alert('Failed to place order: ' + (errorData.error || 'Unknown error'));

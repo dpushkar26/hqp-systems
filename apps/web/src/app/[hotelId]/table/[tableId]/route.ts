@@ -29,7 +29,7 @@ export async function GET(
   // This bypasses reverse proxy header issues AND works perfectly in strict QR code scanner browsers.
   const response = new NextResponse(null, { 
     status: 307, 
-    headers: { 'Location': `/${hotelId}/auth` } 
+    headers: { 'Location': `/${hotelId}/menu` } 
   });
 
   response.cookies.set('active_session_id', session.id, {

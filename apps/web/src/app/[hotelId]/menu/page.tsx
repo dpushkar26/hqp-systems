@@ -15,8 +15,17 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState(MOCK_CATEGORIES[0].id);
   const [mounted, setMounted] = useState(false);
 
+  const [activeOrdersCount, setActiveOrdersCount] = useState(0);
+
   useEffect(() => {
     setMounted(true);
+    fetch('/api/session/orders')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.orders) {
+          setActiveOrdersCount(data.orders.length);
+        }
+      }).catch(e => console.error(e));
   }, []);
 
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -31,9 +40,20 @@ export default function MenuPage() {
     <div className="min-h-screen bg-[#FDFCFB] pb-28 font-sans selection:bg-gray-200">
       
       {/* Premium Header/Brand Area */}
-      <div className="pt-10 px-6 pb-2">
-        <h1 className="font-serif text-3xl text-gray-900 tracking-tight">The {hotelId === 'demo-hotel' ? 'Grand' : hotelId} Menu</h1>
-        <p className="text-sm text-gray-500 font-light mt-1">Tap a category to explore.</p>
+      <div className="pt-10 px-6 pb-2 flex justify-between items-start">
+        <div>
+          <h1 className="font-serif text-3xl text-gray-900 tracking-tight">The {hotelId === 'demo-hotel' ? 'Grand' : hotelId} Menu</h1>
+          <p className="text-sm text-gray-500 font-light mt-1">Tap a category to explore.</p>
+        </div>
+        {activeOrdersCount > 0 && (
+          <Link href={`/${hotelId}/order-status`} className="bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 hover:bg-green-100 transition-colors shadow-sm mt-1">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            Live Orders
+          </Link>
+        )}
       </div>
 
       {/* Category Nav - Glassmorphism */}

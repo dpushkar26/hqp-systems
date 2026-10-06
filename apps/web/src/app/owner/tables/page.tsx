@@ -5,12 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { QrCode, Download, Settings as SettingsIcon, Users, Clock, DollarSign, X } from 'lucide-react';
 
 const initialTables = [
-  { id: 'T01', name: 'Table 01', capacity: 4, status: 'Occupied', guests: 3, currentBill: '$145.00', timeSeated: '45 mins', url: 'https://hqsp.vercel.app/table/T01' },
-  { id: 'T02', name: 'Table 02', capacity: 2, status: 'Available', guests: 0, currentBill: '$0.00', timeSeated: '-', url: 'https://hqsp.vercel.app/table/T02' },
-  { id: 'T03', name: 'Table 03', capacity: 6, status: 'Occupied', guests: 5, currentBill: '$320.00', timeSeated: '1h 20m', url: 'https://hqsp.vercel.app/table/T03' },
-  { id: 'T04', name: 'Table 04', capacity: 4, status: 'Available', guests: 0, currentBill: '$0.00', timeSeated: '-', url: 'https://hqsp.vercel.app/table/T04' },
-  { id: 'P01', name: 'Patio 01', capacity: 8, status: 'Occupied', guests: 8, currentBill: '$560.00', timeSeated: '2h 10m', url: 'https://hqsp.vercel.app/table/P01' },
-  { id: 'P02', name: 'Patio 02', capacity: 4, status: 'Available', guests: 0, currentBill: '$0.00', timeSeated: '-', url: 'https://hqsp.vercel.app/table/P02' },
+  { id: 't-101', name: 'Table 101', capacity: 4, status: 'Occupied', guests: 3, currentBill: '$145.00', timeSeated: '45 mins', url: 'https://hqsp.vercel.app/table/T01' },
+  { id: 't-102', name: 'Table 102', capacity: 2, status: 'Available', guests: 0, currentBill: '$0.00', timeSeated: '-', url: 'https://hqsp.vercel.app/table/T02' },
+  { id: 't-103', name: 'Table 103', capacity: 6, status: 'Occupied', guests: 5, currentBill: '$320.00', timeSeated: '1h 20m', url: 'https://hqsp.vercel.app/table/T03' },
 ];
 
 export default function TablesPage() {
@@ -35,6 +32,14 @@ export default function TablesPage() {
       url: editForm.url
     } : t));
     setSettingsModalId(null);
+  };
+
+  const getTableUrl = (table: any) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://hqp-systems.vercel.app';
+    if (table.url && table.url.startsWith('http') && !table.url.includes('hqsp.vercel.app/table')) {
+       return table.url; // Custom overridden URL
+    }
+    return `${origin}/hqsp-demo/table/${table.id}`;
   };
 
   // Stats calculations
@@ -125,7 +130,7 @@ export default function TablesPage() {
               {/* QR Code Column */}
               <div className="w-[100px] h-[100px] rounded-2xl bg-white border border-gray-200 p-2 shadow-sm shrink-0">
                 <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(table.url)}`} 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getTableUrl(table))}`} 
                   alt={`QR for ${table.name}`}
                   className="w-full h-full"
                 />
@@ -135,7 +140,7 @@ export default function TablesPage() {
             <div className="flex gap-4">
               <button 
                 className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white py-3 rounded-xl text-[14px] font-medium hover:bg-black transition-colors"
-                onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(table.url)}`, '_blank')}
+                onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(getTableUrl(table))}`, '_blank')}
               >
                 <Download size={16} />
                 Download QR

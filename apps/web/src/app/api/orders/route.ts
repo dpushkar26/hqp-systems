@@ -114,17 +114,3 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
-  try {
-    const orders = await prisma.order.findMany({
-      include: { 
-        items: { include: { menuItem: true } },
-        table: true
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-    return NextResponse.json({ success: true, orders });
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}

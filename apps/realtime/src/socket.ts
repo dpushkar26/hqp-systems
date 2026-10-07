@@ -11,6 +11,10 @@ export function setupSocket(app: FastifyInstance) {
 
       // Clients should emit this event with their hotelId to join the specific room
       socket.on('join:hotel', (hotelId: string) => {
+        if (typeof hotelId !== 'string' || hotelId.trim().length === 0 || hotelId.length > 100) {
+          app.log.warn(`Invalid hotelId provided by socket ${socket.id}`);
+          return;
+        }
         const roomName = `hotel:${hotelId}`;
         socket.join(roomName);
         app.log.info(`Socket ${socket.id} joined room ${roomName}`);

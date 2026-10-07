@@ -1,9 +1,10 @@
 'use server';
+import { prisma } from '@/server/db/prisma';
 
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+
 
 const getCustomerProfileSchema = z.object({
   hotelId: z.string(),

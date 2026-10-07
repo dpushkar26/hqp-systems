@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/auth";
 
 export type Capability = 
   | "hotel:create"

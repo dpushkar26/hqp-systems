@@ -1,5 +1,5 @@
 import { getSession } from "./session";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/auth";
 import { cookies } from "next/headers";
 import { prisma } from "@/server/db/prisma";
 
@@ -32,7 +32,7 @@ export async function requireRole(allowedRoles: UserRole[]) {
 }
 
 export async function requireGuestSession() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const sessionId = cookieStore.get("active_session_id")?.value;
 
   if (!sessionId) {

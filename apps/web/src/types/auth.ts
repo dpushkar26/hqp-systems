@@ -1,7 +1,9 @@
-export type UserRole = 'GUEST' | 'STAFF' | 'ADMIN';
+import { UserRole } from "@prisma/client";
 
 export interface StaffSession {
-  userId: string;
+  id: string;
   role: UserRole;
-  expiresAt: Date;
+  hotelId: string | null;
+  isActive: boolean;
+  deletedAt: Date | null;
 }

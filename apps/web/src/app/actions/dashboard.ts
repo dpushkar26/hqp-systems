@@ -4,6 +4,8 @@ import { prisma } from '@/server/db/prisma';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 import { Queue } from 'bullmq';
+import { requireRole } from '@/server/auth/guards';
+import { PERMISSIONS } from '@/server/auth/permissions';
 import * as xlsx from 'xlsx';
 
 
@@ -24,9 +26,15 @@ const generateReceiptSchema = z.object({
 });
 
 export async function generateReceipt(payload: z.infer<typeof generateReceiptSchema>) {
+  const { user, hotelId: sessionHotelId } = await requireRole(PERMISSIONS["bills:generate"]);
+
   const result = generateReceiptSchema.safeParse(payload);
   if (!result.success) {
     return { error: 'Invalid payload', details: result.error.issues };
+  }
+
+  if (user.role !== 'PLATFORM_ADMIN' && user.role !== 'PLATFORM_OPS' && sessionHotelId !== result.data.hotelId) {
+    return { error: 'Forbidden' };
   }
 
   const invoice = await prisma.invoice.findUnique({
@@ -57,6 +65,7 @@ const sendWhatsAppSchema = z.object({
 });
 
 export async function sendBillToWhatsApp(payload: z.infer<typeof sendWhatsAppSchema>) {
+  await requireRole(PERMISSIONS["bills:generate"]);
   const result = sendWhatsAppSchema.safeParse(payload);
   if (!result.success) return { error: 'Invalid payload' };
 
@@ -77,10 +86,14 @@ const exportDailyBillsSchema = z.object({
 });
 
 export async function exportDailyBillsToExcel(payload: z.infer<typeof exportDailyBillsSchema>) {
+  const { user, hotelId: sessionHotelId } = await requireRole(PERMISSIONS["reports:view"]);
   const result = exportDailyBillsSchema.safeParse(payload);
   if (!result.success) return { error: 'Invalid payload' };
 
   const { hotelId, date } = result.data;
+  if (user.role !== 'PLATFORM_ADMIN' && user.role !== 'PLATFORM_OPS' && sessionHotelId !== hotelId) {
+    return { error: 'Forbidden' };
+  }
   const startDate = new Date(`${date}T00:00:00.000Z`);
   const endDate = new Date(`${date}T23:59:59.999Z`);
 

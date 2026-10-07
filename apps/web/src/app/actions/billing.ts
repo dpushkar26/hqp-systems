@@ -1,10 +1,11 @@
 'use server';
+import { prisma } from '@/server/db/prisma';
 
 import { z } from 'zod';
 import { PrismaClient, PaymentMode } from '@prisma/client';
 import Razorpay from 'razorpay';
 
-const prisma = new PrismaClient();
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || '',
   key_secret: process.env.RAZORPAY_KEY_SECRET || '',

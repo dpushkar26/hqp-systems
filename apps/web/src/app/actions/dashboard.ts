@@ -1,11 +1,12 @@
 'use server';
+import { prisma } from '@/server/db/prisma';
 
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 import { Queue } from 'bullmq';
 import * as xlsx from 'xlsx';
 
-const prisma = new PrismaClient();
+
 
 // Setup BullMQ for WhatsApp background jobs
 const whatsappQueue = new Queue('whatsapp-notifications', {

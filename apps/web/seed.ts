@@ -1,4 +1,4 @@
-import { prisma } from './src/lib/prisma';
+import { prisma } from './src/server/db/prisma';
 
 async function main() {
   // Create a demo hotel

@@ -1,4 +1,5 @@
 'use server';
+import { prisma } from '@/server/db/prisma';
 
 import { z } from 'zod';
 import { PrismaClient, PaymentMode } from '@prisma/client';
@@ -7,7 +8,7 @@ import { Queue } from 'bullmq';
 import Razorpay from 'razorpay';
 
 // These would normally be instantiated in a separate db.ts or lib/ folder
-const prisma = new PrismaClient();
+
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL || '',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || '',

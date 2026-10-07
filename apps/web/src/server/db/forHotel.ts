@@ -30,7 +30,7 @@ export function forHotel(hotelId: string) {
   return prisma.$extends({
     query: {
       $allModels: {
-        async $allOperations({ model, operation, args, query }) {
+        async $allOperations({ model, operation, args, query }: any) {
           if (!model || !tenantModels.includes(model as TenantModel)) {
             return query(args);
           }

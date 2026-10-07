@@ -15,9 +15,9 @@ export async function POST(request: Request) {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'secret'; // Set this in .env
     const expectedSignature = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
 
-    // if (expectedSignature !== signature) {
-    //   return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
-    // }
+    if (expectedSignature !== signature) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    }
 
     const payload = JSON.parse(rawBody);
 

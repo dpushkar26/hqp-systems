@@ -100,7 +100,7 @@ export async function createOrder(payload: z.infer<typeof createOrderSchema>) {
       });
     }
 
-    // 5b. Atomic visit-count update using raw SQL to prevent race conditions
+    // Phase 2 (FR-103): make this once per day, on first order, atomic raw SQL
     await tx.$executeRaw`
       UPDATE "Customer"
       SET "visitCount" = "visitCount" + 1, "lastVisitDate" = CURRENT_DATE

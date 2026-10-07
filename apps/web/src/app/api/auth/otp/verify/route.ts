@@ -2,17 +2,17 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/server/db/prisma';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
-
-
+import { hashOTP, canVerifyOTP, recordFailedAttempt } from '@/server/services/otp';
 
 const VerifyOtpSchema = z.object({
-  otpCode: z.string().length(4),
+  phoneNumber: z.string().regex(/^\+91[6-9]\d{9}$/, 'Invalid Indian mobile number'),
+  otpCode: z.string().length(6, 'OTP must be 6 digits').regex(/^\d+$/, 'OTP must be numeric'),
 });
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { otpCode } = VerifyOtpSchema.parse(body);
+    const { phoneNumber, otpCode } = VerifyOtpSchema.parse(body);
 
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('active_session_id')?.value;
@@ -23,47 +23,53 @@ export async function POST(request: Request) {
 
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
-      include: { customer: true }
     });
 
-    if (!session || !session.customerId) {
+    if (!session) {
       return NextResponse.json({ error: 'Invalid session state.' }, { status: 400 });
     }
 
-    // Check expiry
+    try {
+      await canVerifyOTP(sessionId);
+    } catch (e: any) {
+      return NextResponse.json({ error: e.message }, { status: 429 });
+    }
+
     if (session.otpExpiresAt && new Date() > session.otpExpiresAt) {
       return NextResponse.json({ error: 'OTP has expired. Please request a new one.' }, { status: 400 });
     }
 
-    // Verify OTP
-    if (session.otpCode !== otpCode) {
+    if (session.otpHash !== hashOTP(phoneNumber, otpCode)) {
+      await recordFailedAttempt(sessionId);
       return NextResponse.json({ error: 'Invalid OTP code.' }, { status: 400 });
     }
 
-    // Success! Upgrade session to verified and increment visit count for loyalty
-    await prisma.$transaction([
-      prisma.session.update({
-        where: { id: sessionId },
-        data: {
-          isVerified: true,
-          otpCode: null, // Clear OTP after use
+    const customer = await prisma.customer.upsert({
+      where: {
+        phoneNumber_hotelId: {
+          phoneNumber: phoneNumber,
+          hotelId: session.hotelId,
         }
-      }),
-      // Assuming this is their first order of the visit, increment visit count
-      // In a real app, we'd ensure we only increment once per calendar day
-      prisma.customer.update({
-        where: { id: session.customerId },
-        data: {
-          visitCount: { increment: 1 },
-          lastVisitDate: new Date(),
-        }
-      })
-    ]);
+      },
+      update: {},
+      create: {
+        phoneNumber: phoneNumber,
+        hotelId: session.hotelId,
+        visitCount: 0,
+      }
+    });
+
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        isVerified: true,
+        otpHash: null,
+        customerId: customer.id,
+      }
+    });
 
     return NextResponse.json({
-      success: true,
-      message: 'Session verified successfully',
-      visitCount: (session.customer?.visitCount ?? 0) + 1
+      ok: true,
     });
 
   } catch (error) {

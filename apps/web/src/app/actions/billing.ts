@@ -4,6 +4,8 @@ import { prisma } from '@/server/db/prisma';
 import { z } from 'zod';
 import { PrismaClient, PaymentMode } from '@prisma/client';
 import Razorpay from 'razorpay';
+import { requireRole } from '@/server/auth/guards';
+import { PERMISSIONS } from '@/server/auth/permissions';
 
 
 const razorpay = new Razorpay({
@@ -18,11 +20,18 @@ const generateInvoiceSchema = z.object({
 });
 
 export async function generateInvoice(payload: z.infer<typeof generateInvoiceSchema>) {
+  const { user, hotelId: sessionHotelId } = await requireRole(PERMISSIONS["bills:generate"]);
+
   const result = generateInvoiceSchema.safeParse(payload);
   if (!result.success) {
     return { error: 'Invalid payload', details: result.error.issues };
   }
   const { hotelId, tableId, customerId } = result.data;
+  
+  if (user.role !== 'PLATFORM_ADMIN' && user.role !== 'PLATFORM_OPS' && sessionHotelId !== hotelId) {
+    return { error: 'Forbidden' };
+  }
+
 
   // 1. Fetch all UNPAID orders for this specific customer at this specific table
   const unpaidOrders = await prisma.order.findMany({

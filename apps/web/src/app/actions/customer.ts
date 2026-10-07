@@ -3,6 +3,8 @@ import { prisma } from '@/server/db/prisma';
 
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
+import { requireRole } from '@/server/auth/guards';
+import { PERMISSIONS } from '@/server/auth/permissions';
 
 
 
@@ -12,12 +14,19 @@ const getCustomerProfileSchema = z.object({
 });
 
 export async function getCustomerProfile(payload: z.infer<typeof getCustomerProfileSchema>) {
+  const { user, hotelId: sessionHotelId } = await requireRole(PERMISSIONS["orders:read"]);
+
   const result = getCustomerProfileSchema.safeParse(payload);
   if (!result.success) {
     return { error: 'Invalid payload', details: result.error.issues };
   }
 
   const { hotelId, phoneNumber } = result.data;
+  
+  if (user.role !== 'PLATFORM_ADMIN' && user.role !== 'PLATFORM_OPS' && sessionHotelId !== hotelId) {
+    return { error: 'Forbidden' };
+  }
+
 
   // Fetch the customer along with their past orders and invoices
   const customer = await prisma.customer.findUnique({

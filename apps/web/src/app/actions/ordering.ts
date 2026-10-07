@@ -36,11 +36,20 @@ const createOrderSchema = z.object({
   })).min(1),
 });
 
+import { requireRole } from '@/server/auth/guards';
+import { PERMISSIONS } from '@/server/auth/permissions';
+
 export async function createOrder(payload: z.infer<typeof createOrderSchema>) {
+  const { user, hotelId: sessionHotelId } = await requireRole(PERMISSIONS["orders:update"]);
+
   // 1 & 2. Validate payload
   const result = createOrderSchema.safeParse(payload);
   if (!result.success) {
     return { error: 'Invalid payload', details: result.error.issues };
+  }
+  
+  if (user.role !== 'PLATFORM_ADMIN' && user.role !== 'PLATFORM_OPS' && sessionHotelId !== result.data.hotelId) {
+    return { error: 'Forbidden' };
   }
   const { hotelId, tableId, phoneNumber, paymentMode, items } = result.data;
 

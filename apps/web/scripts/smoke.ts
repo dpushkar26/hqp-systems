@@ -3,7 +3,9 @@ import path from 'path';
 config({ path: path.resolve(__dirname, '../../.env') });
 
 async function main() {
-  process.env.DATABASE_URL = 'postgresql://neondb_owner:npg_X8Zlwz5LhtHQ@ep-blue-dawn-b5737c3c.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set in .env');
+  }
   const { prisma } = await import('../src/server/db/prisma');
   console.log('Connecting to Neon DB...');
   
